@@ -8,7 +8,13 @@ const enc = encodeURIComponent;
 
 function createSupabaseDb({ url, serviceKey }) {
   const base = `${url.replace(/\/+$/, '')}/rest/v1`;
-  const headers = (extra = {}) => ({ apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json', ...extra });
+  serviceKey = String(serviceKey).trim();
+  // Kunci lama (service_role) berbentuk JWT "eyJ..." → kirim juga sebagai Bearer.
+  // Kunci baru (sb_secret_...) bukan JWT → cukup lewat header apikey.
+  const isJwt = serviceKey.startsWith('eyJ');
+  const headers = (extra = {}) => ({
+    apikey: serviceKey, ...(isJwt ? { Authorization: `Bearer ${serviceKey}` } : {}), 'Content-Type': 'application/json', ...extra,
+  });
 
   async function dbError(res) {
     let data = null;
@@ -18,7 +24,9 @@ function createSupabaseDb({ url, serviceKey }) {
     if (code === 'P0001') return new HttpError(/tidak ditemukan/i.test(message) ? 404 : 409, message); // dari fungsi SQL
     if (code === '23505') return new HttpError(409, 'Data sudah ada (duplikat).');
     if (code === '23514' || code === '23502' || code === '22P02') return new HttpError(400, 'Data tidak valid.');
-    return new HttpError(502, 'Terjadi kesalahan pada database.');
+    // Sertakan alasan dari Supabase (bukan data rahasia) agar mudah didiagnosis saat deploy.
+    const detail = String(message || res.statusText || '').slice(0, 200);
+    return new HttpError(502, `Terjadi kesalahan pada database [${code || res.status}] ${detail}`.trim());
   }
 
   async function sb(method, path, { body, prefer } = {}) {
