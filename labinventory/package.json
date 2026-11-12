@@ -9,6 +9,6 @@
     "seed": "node scripts/make-seed.js"
   },
   "engines": {
-    "node": "20.x"
+    "node": "26.x"
   }
 }
