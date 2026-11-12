@@ -1,0 +1,14 @@
+{
+  "name": "labinventory",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Laboratory Inventory & Borrowing Management System",
+  "scripts": {
+    "dev": "node server.js",
+    "test": "node --test test/api.test.js test/frontend.test.js",
+    "seed": "node scripts/make-seed.js"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}
