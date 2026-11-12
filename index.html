@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LabInv — Inventaris Lab Komputer</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23ffcf3d'/><text x='50' y='66' font-size='46' text-anchor='middle' font-family='monospace' font-weight='700' fill='%2316213a'>LI</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Tampil sebentar saat sesi lama diperiksa -->
+  <div id="boot" class="boot hidden"><span class="brand-mark">LI</span><p>Memuat…</p></div>
+
+  <!-- ============ HALAMAN LOGIN ============ -->
+  <section id="login-view" class="login">
+    <div class="login-card">
+      <div class="brand"><span class="brand-mark">LI</span> LabInv</div>
+      <h1>Masuk</h1>
+      <p class="muted">Inventaris & peminjaman barang lab komputer</p>
+
+      <div id="file-warning" class="note warn" hidden>
+        Buka lewat <b>http://localhost:3000</b> setelah menjalankan <code>npm run dev</code>, bukan dengan klik dua kali file ini.
+      </div>
+
+      <form id="login-form" class="form">
+        <label class="field"><span>Username</span>
+          <input id="login-username" autocomplete="username" required placeholder="Masukkan username" /></label>
+        <label class="field"><span>Password</span>
+          <div class="pass-wrap">
+            <input id="login-password" type="password" autocomplete="current-password" required placeholder="Masukkan password" />
+            <button type="button" id="toggle-pass" class="pass-toggle" aria-label="Tampilkan password"><i class="ri-eye-line"></i></button>
+          </div></label>
+        <div id="login-error" class="alert hidden" role="alert"></div>
+        <button id="login-btn" class="btn btn-primary btn-block" type="submit">Masuk</button>
+      </form>
+
+      <div class="divider">Akun demo, klik untuk masuk</div>
+      <div class="demo-list">
+        <button type="button" class="demo-card" data-user="admin" data-pass="admin123">
+          <span class="role-chip admin">Admin</span><code>admin / admin123</code><i class="ri-arrow-right-line"></i>
+        </button>
+        <button type="button" class="demo-card" data-user="staff" data-pass="staff123">
+          <span class="role-chip staff">Staff</span><code>staff / staff123</code><i class="ri-arrow-right-line"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    try { if (localStorage.getItem('labinv_token')) {
+      document.getElementById('login-view').classList.add('hidden');
+      document.getElementById('boot').classList.remove('hidden');
+    } } catch (e) {}
+    if (location.protocol === 'file:') document.getElementById('file-warning').hidden = false;
+  </script>
+
+  <!-- ============ APLIKASI (setelah login) ============ -->
+  <div id="app-view" class="hidden">
+    <header class="appbar">
+      <div class="appbar-inner">
+        <a href="#/dashboard" class="brand"><span class="brand-mark">LI</span> LabInv</a>
+        <nav id="nav" class="nav"></nav>
+        <div class="user">
+          <span id="user-name"></span>
+          <button id="logout-btn" class="btn-logout" title="Keluar"><i class="ri-logout-box-r-line"></i></button>
+        </div>
+      </div>
+    </header>
+    <main class="container">
+      <div class="page-head">
+        <h1 id="page-title"></h1>
+        <div id="page-actions"></div>
+      </div>
+      <section id="page"></section>
+    </main>
+  </div>
+
+  <!-- ============ MODAL & NOTIFIKASI ============ -->
+  <div id="modal" class="modal-backdrop hidden">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head">
+        <h3 id="modal-title"></h3>
+        <button class="icon-btn" data-close aria-label="Tutup"><i class="ri-close-line"></i></button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
