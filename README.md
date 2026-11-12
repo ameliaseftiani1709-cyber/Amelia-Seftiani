@@ -1,2 +1,2 @@
 # Amelia-Seftiani
-amel lab
+labinventory
