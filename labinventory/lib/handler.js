@@ -106,7 +106,12 @@ function createHandler(db, { secret }) {
       const method = req.method;
       let m;
 
-      if (method === 'GET' && path === '/health') return send(res, 200, { ok: true, db: db.kind });
+      if (method === 'GET' && path === '/health') {
+        const out = { ok: true, db: db.kind };
+        // /api/health?check=1 → diagnosis koneksi database (tidak menampilkan isi kunci)
+        if (url.searchParams.get('check') === '1' && db.diagnose) out.check = await db.diagnose();
+        return send(res, 200, out);
+      }
 
       /* ---------- Auth ---------- */
       if (method === 'POST' && path === '/auth/login') {
